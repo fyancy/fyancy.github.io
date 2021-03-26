@@ -1,7 +1,7 @@
 # Site settings
 title: JokerD’s Blog
 SEOTitle: JokerD的博客 | JokerD Blog
-header-img: img/home-bg.jpg
+header-img: img/home.jpg
 email: dongguanting@126.com
 description: "Try harder"
 keyword: ""
@@ -56,7 +56,7 @@ duoshuo_share: false                     # set to false if you want to use Comme
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "了解自己，不急不躁，春耕秋收，不羡不慕。"
-sidebar-avatar: /img/hector.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/dgt.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
