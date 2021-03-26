@@ -1,6 +1,6 @@
 # Site settings
-title: JokerDD’s Blog
-SEOTitle: JokerDD的博客 | JokerDD Blog
+title: JokerD’s Blog
+SEOTitle: JokerD的博客 | JokerD Blog
 header-img: img/home-bg.jpg
 email: dongguanting@126.com
 description: "Try harder"
@@ -55,7 +55,7 @@ duoshuo_share: false                     # set to false if you want to use Comme
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "不急不躁，春耕秋收。"
+sidebar-about-description: "了解自己，不急不躁，春耕秋收，不羡不慕。"
 sidebar-avatar: /img/hector.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -69,13 +69,13 @@ featured-condition-size: 1              # A tag will be featured if the size of 
 # Friends
 friends: [
     {
-        title: "Bebop.C Blog",
+        title: "Lebron James's Blog",
         href: "#"
     },{
-        title: "Spike Spiegel",
+        title: "Tracy's Blog",
         href: "#"
     },{
-        title: "Jet Black",
+        title: "Joe Richard",
         href: "#"
     },{
         title: "Faye Valentine",

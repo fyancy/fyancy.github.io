@@ -1,9 +1,9 @@
 {
-    "name": "bebop.c-blog",
-    "title": "Bebop.C Blog",
+    "name": "JokerD-blog",
+    "title": "JokerD Blog",
     "version": "1.0.0",
-    "homepage": "https://hectoor.github.io/",
-    "author": "Bebop.C",
+    "homepage": "https://dongguanting.github.io/",
+    "author": "dongguanting",
     "devDependencies": {
         "grunt": "~0.4.5",
         "grunt-contrib-less": "~0.11.4",
@@ -13,7 +13,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/Hectoor/Hectoor.github.io"
+        "url": "https://https://github.com/dongguanting/dongguanting.github.io"
     },
     "scripts": {
         "preview": "cd _site; python -m SimpleHTTPServer 8020",

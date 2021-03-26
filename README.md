@@ -1,4 +1,4 @@
-# Hectoor.Z Blog
+# JokerD Blog
 
 ## Thanks
 
