@@ -1,24 +1,16 @@
----
-layout:     post
-title:      "浅谈json格式的那点事 "
-subtitle:   "fucking json "
-date:       2021-03-27 11:30:00
-author:     "JokerD"
-header-img: "img/post-think-try-write.jpg"
-tags:
-    - json
----
-# json那点事
+
+# 浅谈json的一二事
 
 ## 1.起因
 
-最近自己被毕设也是搞得焦头烂额，其中最让人头疼的便是数据处理，我的fewshot数据中很大一部分就是json格式的，每个json都有上千条数据。自己之前接触的json格式非常少，就打算写一篇博文总结。本文的目标事例：
+最近自己被毕设也是搞得焦头烂额，题目是“基于原型网络的小样本自然语言处理”，其中最让人头疼的便是数据处理，meta learning相关的fewshot数据，很大一部分都是json格式的，每个json都有上千条数据。自己之前接触的json格式非常少，就打算写一篇博文在学中总结。本文的目标事例：
 
 将毕设中baseline需要将原本json格式数据处理成baseline模型可用的数据，所以就想写一个json处理python框架。
 
-![json1](img/json/1.jpg)
+![\[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Voy0pvUu-1616832683116)(img/json/1.jpg)\]](https://img-blog.csdnimg.cn/20210327161527339.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2RvbmdndWFudGluZw==,size_16,color_FFFFFF,t_70#pic_center)
 
-少样本NLPjson格式语料（左），baseline格式（右）
+
+少样本 json格式语料（左），baseline格式（右）
 
 ## 2.什么是json
 
@@ -30,14 +22,17 @@ tags:
 
 [参考博客链接](https://blog.csdn.net/weixin_41819731/article/details/81414968)
 
+
 ## 3.python的json处理语法
 
 ### 3.1 常用方法
 
-|json.dumps	|将 Python 对象编码成 JSON 字符串
-|json.loads |将已编码的 JSON 字符串解码为 Python 对象
 
-###3.2 json 读取方法
+| 方法 | 解释      |
+|:--------:| ------:|
+| json.dumps | 将 Python 对象编码成 JSON 字符串 |
+| json.loads | 将已编码的 JSON 字符串解码为 Python 对象 |
+### 3.2 json 读取方法
 
 ```python
 
@@ -47,13 +42,13 @@ tags:
             
 ```
 
-##4 .自己的理解
+## 4.自己的理解
 
 json 其实在我用python时，发现复杂的json其实就是list与dict的混合组合，每个list中混有许许多多个dict，所以我的经验是层层剥开，通过对每一层的type进行判断，若是list类型遍历即可，若是dict则不停取其key值。
 
 ### 4.1 输入
+![](https://img-blog.csdnimg.cn/20210327162040637.PNG?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2RvbmdndWFudGluZw==,size_16,color_FFFFFF,t_70#pic_center)
 
-![json1](img/json/2.PNG)
 
 ### 4.2 代码如下：
 
@@ -73,7 +68,11 @@ with open('snips_train_1.json', 'r',encoding='utf8') as dict:
     
 ```
 
-通过读取json，对json中的类别更加清晰，从输入也能看出该json构造是：dict(例如“AddToPlaylist”等5个类)->list->dict（support and query类）->dict（seq_ins）
+通过读取json，对json中的类别更加清晰。因为这是few shot 数据中的训练集，所以构成比较复杂，这里面还有support与query，seq_ins与seq_out作为键值。
+
+所以该json构造是：dict(例如“AddToPlaylist”等5个类)->list->dict（support and query类）->dict（seq_ins）
+
+我们要做的就是将外面的“皮”层层拨开，下面是我针对自己数据的“剥皮过程”，只拨开了第一个类的数据。
 
 ```python
     '''第一类'''
@@ -94,7 +93,10 @@ with open('snips_train_1.json', 'r',encoding='utf8') as dict:
 上述代码作用便是将最后的数据剥出来，并输出的pycharm终端。
 
 ### 4.3 输出
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210327161333907.PNG?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2RvbmdndWFudGluZw==,size_16,color_FFFFFF,t_70)
 
-![json1](img/json/3)
 
 这样就非常顺利的将结果输出，我会将它复制到我的seq_in中作为输入跑baseline的precision与recall。想要直接输出文档也可以加一个write直接内容将输出到txt文件中。
+
+第一篇技术文，未来我也会把自己打造成一个小小技术博主！
+
