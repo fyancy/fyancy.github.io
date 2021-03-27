@@ -9,14 +9,16 @@ tags:
     - json
 ---
 # json那点事
-##1.起因
+## 1.起因
+
 最近自己被毕设也是搞得焦头烂额，其中最让人头疼的便是数据处理，我的fewshot数据中很大一部分就是json格式的，每个json都有上千条数据。自己之前接触的json格式非常少，就打算写一篇博文总结。本文的目标事例是吧毕设中baseline需要将原本json格式数据处理成baseline模型可用的数据，所以就想写一个json处理python框架。
 
 ![json1](img/json/json1.jpg)
 
 少样本NLPjson格式语料（左），baseline格式（右）
 
-##2.什么是json
+## 2.什么是json
+
 >JSON (JavaScript Object Notation, JS 对象标记) 是一种轻量级的数据交换格式。它基于 ECMAScript (w3c制定的js规范)的一个子集，采用完全独立于编程语言的文本格式来存储和表示数据。简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于人阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。——百度百科
 
 >数据传输是我们在敲代码时，经常遇到的一个场景,前后端交互。给数据一个统一的格式有利于我们编写和解析数据。
@@ -33,11 +35,13 @@ tags:
 
 ###3.2 json 读取方法
 
-(```)
+```python
+
     with open(json_path, 'r') as f:
         for line in f.readlines():
             json_data = json.loads(line)
-(```)
+            
+```
 
 ##4.自己的理解
 json 其实在我用python时，发现复杂的json其实就是list与dict的混合组合，每个list中混有许许多多个dict，所以我的经验是层层剥开，通过对每一层的type进行判断，若是list类型遍历即可，若是dict则不停取其key值。
@@ -46,7 +50,8 @@ json 其实在我用python时，发现复杂的json其实就是list与dict的混
 ![json1](img/json/2.jpg)
 
 ###4.2 代码如下：
-(```)
+
+```python
 import json  #json
 with open('snips_train_1.json', 'r',encoding='utf8') as dict:
     data = json.load(dict)
@@ -59,11 +64,12 @@ with open('snips_train_1.json', 'r',encoding='utf8') as dict:
     d= data['BookRestaurant']
     e =data['SearchCreativeWork']
     print(a[0]['support'].keys())
-(```)
+    
+```
+
 通过读取json，对json中的类别更加清晰，从输入也能看出该json构造是：dict(例如“AddToPlaylist”等5个类)->list->dict（support and query类）->dict（seq_ins）
 
-
-(```)
+```python
     '''第一类'''
     res = []
     str = ''
@@ -76,8 +82,11 @@ with open('snips_train_1.json', 'r',encoding='utf8') as dict:
             str = ''
     for line in res:
         print(line)
-(```)
+        
+```
+
 上述代码作用便是将最后的数据剥出来，并输出的pycharm终端。
 
 ###4.3 输出
+
 ![json1](img/json/3.jpg)
