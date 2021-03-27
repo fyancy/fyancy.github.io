@@ -4,7 +4,7 @@ title:      "阴差阳错的第一篇博客 "
 subtitle:   "my first blog "
 date:       2021-3-27 00:28:00
 author:     "JokerDD"
-header-img: "img/post-think-try-write.jpg"
+header-img: "img/chutan.jpg"
 tags:
     - 初探
 ---
