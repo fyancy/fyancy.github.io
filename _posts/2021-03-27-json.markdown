@@ -32,6 +32,7 @@
 |:--------:| ------:|
 | json.dumps | 将 Python 对象编码成 JSON 字符串 |
 | json.loads | 将已编码的 JSON 字符串解码为 Python 对象 |
+
 ### 3.2 json 读取方法
 
 ```python
@@ -79,7 +80,6 @@ with open('snips_train_1.json', 'r',encoding='utf8') as dict:
     res = []
     str = ''
     for key in range(0,100):  #我这份数据每个类中有100个项
-        #print(a[i]['support']['seq_ins'])
         for j,x in enumerate(a[key]['support']['seq_ins']):#到这里会打印出每个类别所有个seq_in的词语
             for nums in range(len(a[key]['support']['seq_ins'][j])):
                 str += a[key]['support']['seq_ins'][j][nums]+' '
@@ -93,6 +93,7 @@ with open('snips_train_1.json', 'r',encoding='utf8') as dict:
 上述代码作用便是将最后的数据剥出来，并输出的pycharm终端。
 
 ### 4.3 输出
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20210327161333907.PNG?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2RvbmdndWFudGluZw==,size_16,color_FFFFFF,t_70)
 
 
