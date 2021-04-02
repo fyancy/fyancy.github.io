@@ -1,6 +1,5 @@
 # 浅谈json-- 2
 
-<hr style=" border:solid; width:100px; height:1px;" color=#000000 size=1">
 
 # 前言
 
@@ -25,7 +24,7 @@ QA对的数量情况（多余1即一问多答）：
  
 # 一、初探数据
 
-<font color=#999AAA >json示例如下（示例）
+json示例如下（示例）
 ```
  {
         "_id" : ObjectId("5d36e599bc54f451543da02b"),
@@ -91,7 +90,7 @@ with open(path2, "a",encoding = 'utf-8') as fo:
 ```
 ## 3.全部代码
 
-<font color=#999AAA >代码如下（示例）：
+代码如下（示例）：
 ```python
 import json
 path1 =r"D:\json\zhidao_qa.json"#文件的存储位置
@@ -117,11 +116,11 @@ with open(path1, 'r', encoding='utf-8') as f:#整体思路是逐行读取，一�
 
 
 
-<font color=#999AAA >代码注释很详尽了。
+代码注释很详尽了。
 
 
 # 总结
-<font color=#999AAA >以上就是我想分享的内容，json除了复杂list与dict的嵌套种类，还有dict数量庞大但是键值相似的json，nlp的学生未来必然会接触庞大的文本资源，希望大家可以在磨练中得心应手。
+以上就是我想分享的内容，json除了复杂list与dict的嵌套种类，还有dict数量庞大但是键值相似的json，nlp的学生未来必然会接触庞大的文本资源，希望大家可以在磨练中得心应手。
 另附个人blog：[https://dongguanting.github.io/](https://dongguanting.github.io/)
 
 
