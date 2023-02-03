@@ -80,7 +80,7 @@ ga_domain: huangxuan.me
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "Guanting Dong, A Graduate Student in Beijing University of Posts and Telecommunications."
-sidebar-avatar: https://avatars.githubusercontent.com/u/47687248?s=400&u=aa0d3ed7514a916c420a0997497949fa6eaf0d05&v=4      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: https://avatars.githubusercontent.com/u/60767110?s=400&u=604eecdb8c38374fea893277410d231cfcb263d5&v=4      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
