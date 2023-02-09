@@ -1,49 +1,32 @@
 ---
 
 layout:     post
-title:      "Diffusion-LM Improves Controllable Text Generation"
-subtitle:   读读Stanford的研究！
-date:       2022-06-03 18:00:00
-author:     "Andrew Zeng"
+title:      "In-Context Learning（上下文学习）相关分享"
+subtitle:   大模型相关
+date:       2023-02-09 18:00:00
+author:     "Kabi"
 tags:
 
-  - 文本生成
-  - 可控相关
+  - 大模型
+  - In Context learning
 ---
+详见
+https://zhuanlan.zhihu.com/p/603650082/edit
 
-看到Prefix-Tuning的作者最近也在研究可控文本生成，主要思路是将CV生成中DDPM迁移到NLP中，并且用类似PPLM的方法实现控制。
+## 1. 前言
 
-这里DDPM可以见
-https://zhuanlan.zhihu.com/p/523960047
-
-## 1. 介绍
-
-之前的工作主要关注简单的属性控制，然而在更复杂，更细粒度上的控制（如语法结构）进展甚微。
-作者指的更复杂，更细粒度的控制：
-
-![4c365e26bce64ad885d999e16d6de25b](https://user-images.githubusercontent.com/47687248/171829783-85ffe292-3dbc-4d50-be5a-096cee8b4517.png)
-
-为了解决上述困境，作者基于连续的扩散模型提出了非自回归的语言模型（Diffusion-LM）
-至于选择扩散模型的原因，根据文章总结为以下几点：
-
-1. 中间变量的连续且分层的特性使得简单的梯度算法就可以实现复杂且可控的生成任务。
-2. 由于文本通常是离散的，因此运用离散的扩散模型具有极大的困难，因此作者对标准的扩散模型进行了改造: 在传统的步骤上添加了embedding step和rounding step，设计了学习embedding的训练目标，并且提出了提升rounding表现的方法。
-3. 之前的控制生成方法，通常基于自回归语言模型，只能从左至右生成。这导致PPLM无法修复在之前步中的错误。
+随着大模型（GPT3，Instruction GPT，ChatGPT）的横空出世，如何更高效地提示大模型也成了学术界与工业界的关注，因此In-context learning的方法在NLP领域十分火热。
+从时间线上看，它的演变历程大约是从Prompt learning（2021年初） 到 Demonstration learning （2021年底） 再到 In-cotnext learning（2022年初），但从方法原理上，他们却有很多相似之处。
+本文对一篇有代表性的in-context learning论文：Rethinking the Role of Demonstrations: What Makes In-Context Learning Work? 进行阅读，之后我也会做其他ICL论文的阅读笔记。
 
 ## 2. Diffusion Models for Continuous Domains
 
-如下图所示：
+在这篇综述论文https://arxiv.org/pdf/2301.00234.pdf 给出了详细的定义：
+​
 
-![c2859cc4729d40efb319ae101bb1c4e5](https://user-images.githubusercontent.com/47687248/171830017-4581ac73-a096-4d5c-a161-e7cf9a60622b.png)
 
-经典的训练目标：
-
-![d2b41e441df942a8b9522dc8b53683c5](https://user-images.githubusercontent.com/47687248/171830047-234aa95d-13f5-431a-ad8b-f0d087fa2987.png)
-
-简化的训练目标：
-
-![443340e26591490882b655b2ddfec896](https://user-images.githubusercontent.com/47687248/171830087-124cf7dc-92f3-4b51-95fb-abd6d41ce231.png)
-
+In Context Learning（ICL）的关键思想是从类比中学习。上图给出了一个描述语言模型如何使用ICL进行决策的例子。首先，ICL需要一些示例来形成一个演示上下文。这些示例通常是用自然语言模板编写的。然后ICL将查询的问题（即你需要预测标签的input）和一个上下文演示（一些相关的cases）连接在一起，形成带有提示的输入，并将其输入到语言模型中进行预测。
+值得注意的是，与需要使用反向梯度更新模型参数的训练阶段的监督学习不同，ICL不需要参数更新，并直接对预先训练好的语言模型进行预测（这是与prompt，传统demonstration learning不同的地方，ICL不需要在下游P-tuning或Fine-tuning）。我们希望该模型学习隐藏在演示中的模式，并据此做出正确的预测。
 详细介绍见论文
 
 ## 3. Diffusion-LM: Continuous Diffusion Language Modeling
