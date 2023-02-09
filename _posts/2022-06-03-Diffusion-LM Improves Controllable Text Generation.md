@@ -19,64 +19,84 @@ https://zhuanlan.zhihu.com/p/603650082/edit
 从时间线上看，它的演变历程大约是从Prompt learning（2021年初） 到 Demonstration learning （2021年底） 再到 In-cotnext learning（2022年初），但从方法原理上，他们却有很多相似之处。
 本文对一篇有代表性的in-context learning论文：Rethinking the Role of Demonstrations: What Makes In-Context Learning Work? 进行阅读，之后我也会做其他ICL论文的阅读笔记。
 
-## 2. Diffusion Models for Continuous Domains
+## 2. 什么是In-Context Learning：
 
 在这篇综述论文https://arxiv.org/pdf/2301.00234.pdf 给出了详细的定义：
 ​
-
+![1](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/1.png)
 
 In Context Learning（ICL）的关键思想是从类比中学习。上图给出了一个描述语言模型如何使用ICL进行决策的例子。首先，ICL需要一些示例来形成一个演示上下文。这些示例通常是用自然语言模板编写的。然后ICL将查询的问题（即你需要预测标签的input）和一个上下文演示（一些相关的cases）连接在一起，形成带有提示的输入，并将其输入到语言模型中进行预测。
 值得注意的是，与需要使用反向梯度更新模型参数的训练阶段的监督学习不同，ICL不需要参数更新，并直接对预先训练好的语言模型进行预测（这是与prompt，传统demonstration learning不同的地方，ICL不需要在下游P-tuning或Fine-tuning）。我们希望该模型学习隐藏在演示中的模式，并据此做出正确的预测。
 详细介绍见论文
 
-## 3. Diffusion-LM: Continuous Diffusion Language Modeling
+## 3. 论文分析：
 
-作者对标准的扩散模型进行了部分修改。
+Rethinking the Role of Demonstrations: What Makes In-Context Learning Work? 中我们已经发现Demonstration，ICL与大规模语言模型结合（LMs）在零样本条件下的许多任务上取得了很好的效果，但人们对它如何工作以及演示的哪些方面有助于最终任务的执行知之甚少。本文主要以实验为主，探究以上影响ICL的因素。
 
-### 3.1 End-to-end Training
+实验设置：
+作者采用12个模型进行了实验。我们包括6种语言模型（表1），所有这些模型都是仅限解码器的dense LM。LMs的大小从774M到175B不等。
 
-为了将连续的扩散模型运用到离散的文本，定义embedding函数$EMB(w_{i})$将每一个词语映射为向量。
+![2](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/2.png)
 
-![c2859cc4729d40efb319ae101bb1c4e5](https://user-images.githubusercontent.com/47687248/171830401-c7c307aa-ee4c-4a46-a804-6a88820919d6.png)
+对于每个模型，作者采用了两种应用方式，即direct和channel：
 
-在上图中，在forward process中，添加马尔可夫变换使得将离散的词语$w$映射为$x_{0}$, $q_{\phi}(x_{0}|w)=N(EMB(w),\sigma_{0}I)$; 在reverse process中，添加了可训练的rouding step，$p_{\theta}(w|x_{0})=\Pi_{i=1}^{n}p_{\theta}(w_{i}|x_{i})$, 其中$p_{\theta}(w_{i}|x_{i})$是softmax分布，训练目标如下所示：
+![3](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/3.png)
 
-![19295bddcc3c4fb7b2e6bcf88a504297](https://user-images.githubusercontent.com/47687248/171830479-f82a4e78-a366-4184-b50d-cb27269b586c.png)
+Direct：直接计算给定input x条件下，label y的概率P(y|x)。
 
-### 3.2  Reducing Rounding Errors
+Channel：与上面恰好相反，给定y的条件下计算x的概率P(x,y)∝P(x|y）。
 
-作者在这里设计了方法来减少Rounding Errors，详见论文。
+作者在如下数据集上进行实验，包括情感分析，段落检测，自然语言推理，仇恨言语检测，问答，句子补全等任务。
 
-## 4. Decoding and Controllable Generation with Diffusion-LM
+![4](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/4.png)
 
-### 4.1 Controllable Text Generation
+## 结论1：ICL中 Ground Truth 信息无关紧要
+No Demos：LMs直接进行零样本预测，无提示
 
-![bee8e0276e7444f8844360104bcd68e5](https://user-images.githubusercontent.com/47687248/171830744-7f92c6bf-c27f-4657-a0ef-a6cb9c37939a.png)
+Demos w gold：依赖于K个标注的examples进行提示，进行预测
 
-在训练好Diffusion-LM后，作者设计了plug-and-play的机制来控制Diffusion-LM。相比于直接控制的离散的text，作者在由Diffusion-LM生成的连续的隐变量$x_{0:T}$上进行控制。
+Demos w random labels：抽样K个examples提示，但样本labels在标签集中随机采样，而非groundtruth。
 
-![3e3fad5b41d3404a8af86780d1dc910d](https://user-images.githubusercontent.com/47687248/171830911-7d7c320c-97c7-42cd-8e6d-542532b7553a.png)
+![5](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/5.png)
+我们发现，用随机标签替换黄金标签只会轻微影响性能。这一趋势在几乎所有的模型上都是一致的：模型看到的性能下降在0-5%的绝对范围内。在多选择任务中（平均1.7%）替换标签的影响小于在分类任务中（2.6%的绝对标签）。
 
-同时为了生成流利的文本，设计了其他的训练目标。
+这一结果表明，地面真实值输入标签对并不是实现性能提高的必要条件。这是违反直觉的，因为正确的配对训练数据在典型的监督训练中是至关重要的——它通知模型执行下游任务所需的期望输入-标签对应。尽管如此，这些模型在下游任务上确实取得了非常重要的性能。
+作者在以下3个维度上进一步做了消融实验：正确演示占总的百分比（下图1）与演示样本数量K（下图2），演示的模板样式（下图3）
 
-### 4.2 同时为了生成流利的文本，设计了其他的训练目标。
+![6](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/6.png)
+![7](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/7.png)
+![8](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/8.png)
 
-作者在解码的过程中使用了 Minimum Bayes Risk Decoding
+可以得到相似的结论，在演示正确与否影响并不大。
 
-## 5. 实验结果
+## 结论2：ICL的性能收益主要来自独立规范的 输入空间 和 标签空间 ，以及正确一致的演示格式
+作者分别从以下四个维度探究In-Context Learning效果增益的影响
+1. The input-label mapping：即每个输入xi是否与正确的标签yi配对
+2. The distribution of the input text：即x1...xk的分布是否一致
+3. The label space：y1...yk所覆盖的标签空间
+4. The format：使用输入标签配对作为格式。
 
-可以看到相比PPLM，FUDGE模型，Diffusion-LM表现优异。详细实验分析见论文。
+![9](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/9.png)
 
-![d2bb23b04cd44a8eb458c163125dc2fb](https://user-images.githubusercontent.com/47687248/171831225-d6b36950-24c5-47de-a747-ec12fd388ec7.png)
+输入文本分布实验：
+下图中，青绿色的柱子为用（从外部语料中）随机采样的句子替换输入句子的设置。可以看到，模型表现明显下降。因此，in-context learning中，演示中的分布内输入极大地有助于提高性能。这可能是因为已IND（in-distribution）文本的条件使任务更接近于语言建模，因为LM在此期间总是以IND文本为条件进行推理标签。
 
-如下表Diffusion-LM在属性组合控制上表现优异
+![10](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/10.png)
 
-![aac543d7b07049b9b4eceb381cefe576](https://user-images.githubusercontent.com/47687248/171831260-6d5597cf-0c96-4713-b000-0b93f48c0a28.png)
+标签空间实验：
+下图中，青绿色的柱子为用随机英语词汇替代展示样本中的标签。可以看到，模型表现明显下降。因此，in-context learning中，标签空间的一致性显著有助于提高性能。
 
-## 6. 总结
+![11](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/11.png)
 
-论文提出Diffusion-LM，在复杂且细粒度的控制上达到了优异的效果。
-但Diffusion-LMs仍然存在缺点：
-1. 较高的perplexity
-2. 解码的速度相对较慢
-3. 训练较难收敛
+演示格式实验：
+下图中，分别用labels only（深紫）和no labels（深绿）来探索演示模式的差异对模型表现的影响。可以看到，模型相对于上面两图的OOD setting而言，都有了进一步的下降。这可以表明ICL中保持输入-标签对的格式是关键的。
+
+![12](https://github.com/dongguanting/dongguanting.github.io/blob/master/img/in-context/12.png)
+
+## 有意思的讨论：
+作者还进行了个有意思的讨论，即模型是否在Test阶段学习到了知识？
+作者认为如果我们对学习进行严格的定义，即学习在训练数据中给出的输入标签对，那么lm在测试时不学习新的任务。然而，学习一项新任务可以更广泛地解释：它可能包括适应特定的输入和标签分布以及演示的格式，并最终更准确地做出预测。有了这个学习的定义，该模型确实可以从演示中学习任务。我们的实验表明，该模型确实利用了演示的各个方面，并实现了性能的提高。
+
+## 4. 总结：
+本文从多个角度探究了演示是如何让In-context learning在不同的任务中产生性能增益的，而且随着fine-tune阶段的黑盒化，很多文章也提出fine-tune阶段可能让模型丧失了泛化性，那么ICL这种不fine tune的方法既节省时间与资源开销，且能提升效果，应该会在大模型林立的时代被人关注，并迅速火起来。
+
